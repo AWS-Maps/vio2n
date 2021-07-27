@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <title>Regional Map</title>
+    <title>Coverage Comparison Map</title>
     <meta
       name="viewport"
       content="initial-scale=1,maximum-scale=1,user-scalable=no"
@@ -45,9 +45,19 @@
     <style>
       #menu2 {
         position: absolute;
-        top: 40px;
+        top: 30px;
         background: #efefef;
         padding: 10px;
+        font-family: "Open Sans", sans-serif;
+      }
+    </style>
+    <style>
+      #menu3 {
+        position: absolute;
+        top: 60px;
+        background: #efefef;
+        padding: 10px;
+        width: 160px;
         font-family: "Open Sans", sans-serif;
       }
     </style>
@@ -125,6 +135,8 @@
         <label for="Current">Current</label>
         <input id="Interim" type="radio" name="rtoggle" value="light" />
         <label for="light-v10">Interim</label>
+        <input id="Overlay" type="radio" name="rtoggle" value="light" />
+        <label for="light-v10">Overlay</label>
       </div>
     </form>
     <form>
@@ -141,8 +153,54 @@
         <label for="Screenshot">Screenshot</label>
       </div>
     </form>
+    <form>
+      <div id="menu3">
+        <input
+          id="InsOn"
+          type="radio"
+          name="stoggle"
+          value="InsOff"
+          checked="checked"
+        />
+        <label for="InsOn">Insp Locations On</label>
+        <input id="InsOff" type="radio" name="stoggle" value="InsOff" />
+        <label for="InsOff">Insp Locations Off</label>
+      </div>
+    </form>
     <div id="Regions" class="legend">
-      <h4>Regions</h4>
+      <h4>Current Coverage</h4>
+      <div><span style="background-color: rgb(238, 238, 41);"></span>West</div>
+      <div><span style="background-color: rgb(150, 27, 150);"></span>North</div>
+      <div>
+        <span style="background-color: rgb(63, 150, 191);"></span>Central
+      </div>
+      <div><span style="background-color: rgb(18, 215, 18);"></span>East</div>
+      <div>
+        <span style="background-color: rgb(0, 0, 150);"></span>GTA and
+        Surrounding Areas
+      </div>
+      <div>
+        <span style="background-color: rgb(25, 27, 0);"></span>Inspector
+        Location
+      </div>
+    </div>
+    <div id="InterimCoverage" class="legend">
+      <h4>Interim Coverage</h4>
+      <div>
+        <span style="background-color: rgb(255, 0, 0);"></span>Provincial
+        Coverage
+      </div>
+      <div>
+        <span style="background-color: rgb(0, 153, 153);"></span>Affiliate
+        Coverage
+      </div>
+      <div>
+        <span style="background-color: rgb(192, 192, 192);"></span>Unknown or
+        Gap
+      </div>
+    </div>
+    <div id="OverlayCoverage" class="legend">
+      <h4>Coverage</h4>
       <div><span style="background-color: rgb(238, 238, 41);"></span>West</div>
       <div><span style="background-color: rgb(150, 27, 150);"></span>North</div>
       <div>
@@ -153,12 +211,17 @@
         <span style="background-color: rgb(25, 27, 150);"></span>GTA and
         Surrounding Areas
       </div>
-    </div>
-    <div id="InterimCoverage" class="legend">
-      <h4>Interim Coverage</h4>
+      <div>
+        <span style="background-color: rgb(25, 27, 0);"></span>Inspector
+        Location
+      </div>
       <div>
         <span style="background-color: rgb(255, 0, 0);"></span>Interim
-        Provincial Inspector Coverage
+        Provincial Coverage
+      </div>
+      <div>
+        <span style="background-color: rgb(0, 153, 153);"></span>Interim
+        Affiliate Coverage
       </div>
     </div>
     <div id="CensusBox" class="CensusInfo">
@@ -169,7 +232,9 @@
     <script>
       var xx = document.getElementById("InterimCoverage");
       var zz = document.getElementById("CensusBox");
+      var kk = document.getElementById("OverlayCoverage");
       xx.style.display = "none";
+      kk.style.display = "none";
       mapboxgl.accessToken =
         "pk.eyJ1IjoiZXJpY2hudWc0MjYiLCJhIjoiY2syM2EwcGl5MG16NjNsb3h5YThod3JmcCJ9.gSYekVmL1ULC4E3YsNgkkQ";
       var map = new mapboxgl.Map({
@@ -232,7 +297,8 @@
 
             paint: {
               "fill-color": "rgba(0, 0, 0, 0)",
-              "fill-outline-color": "rgba(1, 1, 1, 1)"
+              "fill-outline-color": "rgba(1, 1, 1, 1)",
+              "fill-opacity": 1
             },
             filter: ["==", "PRUID", "35"]
           },
@@ -331,6 +397,7 @@
           },
           labels
         );
+
         map.addLayer(
           {
             id: "west",
@@ -492,11 +559,287 @@
           },
           labels
         );
+        map.addLayer(
+          {
+            id: "InterimLayer2Border",
+            type: "fill",
+            source: {
+              type: "vector",
+              url: "mapbox://erichnug426.0l2socch"
+            },
+            "source-layer": "Municipal_Boundaries-9hkhx1",
+
+            paint: {
+              "fill-color": "rgb(192, 192, 192)",
+              "fill-outline-color": "rgba(0, 0, 0, 1)",
+              "fill-opacity": 0
+            },
+            filter: ["==", "PRUID", "35"]
+          },
+          labels
+        );
+        map.addLayer(
+          {
+            id: "InterimLayer3",
+            type: "fill",
+            source: {
+              type: "vector",
+              url: "mapbox://erichnug426.0l2socch"
+            },
+            "source-layer": "Municipal_Boundaries-9hkhx1",
+
+            paint: {
+              "fill-color": "rgb(0, 153, 153)",
+              "fill-outline-color": "rgba(0, 0, 0, 1)",
+              "fill-opacity": 0
+            },
+            filter: [
+              "any",
+              ["==", "CSDUID", "3537039"],
+              ["==", "CSDUID", "3537034"],
+              ["==", "CSDUID", "3537048"],
+              ["==", "CSDUID", "3537028"],
+              ["==", "CSDUID", "3537016"],
+              ["==", "CSDUID", "3537064"],
+              ["==", "CSDUID", "3537013"],
+              ["==", "CSDUID", "3537003"],
+              ["==", "CSDUID", "3536020"],
+              ["==", "CSDUID", "3538003"],
+              ["==", "CSDUID", "3538030"],
+              ["==", "CSDUID", "3538035"],
+              ["==", "CSDUID", "3538016"],
+              ["==", "CSDUID", "3538007"],
+              ["==", "CSDUID", "3538043"],
+              ["==", "CSDUID", "3538015"],
+              ["==", "CSDUID", "3538040"],
+              ["==", "CSDUID", "3534042"],
+              ["==", "CSDUID", "3539005"],
+              ["==", "CSDUID", "3534030"],
+              ["==", "CSDUID", "3539047"],
+              ["==", "CSDUID", "3539015"],
+              ["==", "CSDUID", "3539041"],
+              ["==", "CSDUID", "3540005"],
+              ["==", "CSDUID", "3540010"],
+              ["==", "CSDUID", "3534024"],
+              ["==", "CSDUID", "3539033"],
+              ["==", "CSDUID", "3539036"],
+              ["==", "CSDUID", "3539060"],
+              ["==", "CSDUID", "3531013"],
+              ["==", "CSDUID", "3540040"],
+              ["==", "CSDUID", "3531025"],
+              ["==", "CSDUID", "3534020"],
+              ["==", "CSDUID", "3539027"],
+              ["==", "CSDUID", "3534021"],
+              ["==", "CSDUID", "3538019"],
+              ["==", "CSDUID", "3538018"],
+              ["==", "CSDUID", "3538031"],
+              ["==", "CSDUID", "3534010"],
+              ["==", "CSDUID", "3531030"],
+              ["==", "CSDUID", "3532038"],
+              ["==", "CSDUID", "3532018"],
+              ["==", "CSDUID", "3532012"],
+              ["==", "CSDUID", "3534005"],
+              ["==", "CSDUID", "3532004"],
+              ["==", "CSDUID", "3532002"],
+              ["==", "CSDUID", "3529005"],
+              ["==", "CSDUID", "3540063"],
+              ["==", "CSDUID", "3540050"],
+              ["==", "CSDUID", "3540055"],
+              ["==", "CSDUID", "3540046"],
+              ["==", "CSDUID", "3523043"],
+              ["==", "CSDUID", "3523050"],
+              ["==", "CSDUID", "3523033"],
+              ["==", "CSDUID", "3531040"],
+              ["==", "CSDUID", "3531011"],
+              ["==", "CSDUID", "3531016"],
+              ["==", "CSDUID", "3530027"],
+              ["==", "CSDUID", "3530020"],
+              ["==", "CSDUID", "3530035"],
+              ["==", "CSDUID", "3532027"],
+              ["==", "CSDUID", "3532045"],
+              ["==", "CSDUID", "3529006"],
+              ["==", "CSDUID", "3530004"],
+              ["==", "CSDUID", "3530013"],
+              ["==", "CSDUID", "3530016"],
+              ["==", "CSDUID", "3530010"],
+              ["==", "CSDUID", "3523025"],
+              ["==", "CSDUID", "3523009"],
+              ["==", "CSDUID", "3523008"],
+              ["==", "CSDUID", "3523017"],
+              ["==", "CSDUID", "3523001"],
+              ["==", "CSDUID", "3525005"],
+              ["==", "CSDUID", "3524015"],
+              ["==", "CSDUID", "3524009"],
+              ["==", "CSDUID", "3524002"],
+              ["==", "CSDUID", "3524001"],
+              ["==", "CSDUID", "3526021"],
+              ["==", "CSDUID", "3526065"],
+              ["==", "CSDUID", "3526057"],
+              ["==", "CSDUID", "3526014"],
+              ["==", "CSDUID", "3526028"],
+              ["==", "CSDUID", "3526047"],
+              ["==", "CSDUID", "3526037"],
+              ["==", "CSDUID", "3526032"],
+              ["==", "CSDUID", "3526011"],
+              ["==", "CSDUID", "3526053"],
+              ["==", "CSDUID", "3526043"],
+              ["==", "CSDUID", "3526003"],
+              ["==", "CSDUID", "3534011"],
+              ["==", "CSDUID", "3539002"],
+              ["==", "CSDUID", "3515037"],
+              ["==", "CSDUID", "3515030"],
+              ["==", "CSDUID", "3515023"],
+              ["==", "CSDUID", "3515014"],
+              ["==", "CSDUID", "3515005"],
+              ["==", "CSDUID", "3515003"],
+              ["==", "CSDUID", "3514045"],
+              ["==", "CSDUID", "3514020"],
+              ["==", "CSDUID", "3514019"],
+              ["==", "CSDUID", "3514021"],
+              ["==", "CSDUID", "3514024"],
+              ["==", "CSDUID", "3514014"],
+              ["==", "CSDUID", "3514004"],
+              ["==", "CSDUID", "3510045"],
+              ["==", "CSDUID", "3510035"],
+              ["==", "CSDUID", "3511030"],
+              ["==", "CSDUID", "3510020"],
+              ["==", "CSDUID", "3511005"],
+              ["==", "CSDUID", "3510010"],
+              ["==", "CSDUID", "3510005"],
+              ["==", "CSDUID", "3556027"],
+              ["==", "CSDUID", "3556031"],
+              ["==", "CSDUID", "3556014"],
+              ["==", "CSDUID", "3554036"],
+              ["==", "CSDUID", "3556042"],
+              ["==", "CSDUID", "3556048"],
+              ["==", "CSDUID", "3556052"],
+              ["==", "CSDUID", "3556056"],
+              ["==", "CSDUID", "3556066"],
+              ["==", "CSDUID", "3556070"],
+              ["==", "CSDUID", "3556073"],
+              ["==", "CSDUID", "3556077"],
+              ["==", "CSDUID", "3556076"],
+              ["==", "CSDUID", "3556106"],
+              ["==", "CSDUID", "3558075"],
+              ["==", "CSDUID", "3558066"],
+              ["==", "CSDUID", "3558059"],
+              ["==", "CSDUID", "3558054"],
+              ["==", "CSDUID", "3558051"],
+              ["==", "CSDUID", "3558044"],
+              ["==", "CSDUID", "3558041"],
+              ["==", "CSDUID", "3558034"],
+              ["==", "CSDUID", "3558028"],
+              ["==", "CSDUID", "3558004"],
+              ["==", "CSDUID", "3558011"],
+              ["==", "CSDUID", "3558019"],
+              ["==", "CSDUID", "3558016"],
+              ["==", "CSDUID", "3558001"],
+              ["==", "CSDUID", "3558012"],
+              ["==", "CSDUID", "3540025"],
+              ["==", "CSDUID", "3532042"]
+            ]
+          },
+          labels
+        );
+
+        map.addLayer(
+          {
+            id: "InterimLayer2",
+            type: "fill",
+            source: {
+              type: "vector",
+              url: "mapbox://erichnug426.0l2socch"
+            },
+            "source-layer": "Municipal_Boundaries-9hkhx1",
+
+            paint: {
+              "fill-color": "rgb(255, 0, 0)",
+              "fill-outline-color": "rgba(0, 0, 0, 1)",
+              "fill-opacity": 0
+            },
+            filter: [
+              "any",
+              ["==", "CSDUID", "3506008"],
+              ["==", "CSDUID", "3509030"],
+              ["==", "CSDUID", "3509024"],
+              ["==", "CSDUID", "1101018"],
+              ["==", "CSDUID", "3509039"],
+              ["==", "CSDUID", "3509010"],
+              ["==", "CSDUID", "3509015"],
+              ["==", "CSDUID", "3548069"],
+              ["==", "CSDUID", "3548055"],
+              ["==", "CSDUID", "3548044"],
+              ["==", "CSDUID", "3549066"],
+              ["==", "CSDUID", "3548034"],
+              ["==", "CSDUID", "3548031"],
+              ["==", "CSDUID", "3548027"],
+              ["==", "CSDUID", "3548022"],
+              ["==", "CSDUID", "3548019"],
+              ["==", "CSDUID", "3548013"],
+              ["==", "CSDUID", "3549005"],
+              ["==", "CSDUID", "3549039"],
+              ["==", "CSDUID", "3549054"],
+              ["==", "CSDUID", "3549036"],
+              ["==", "CSDUID", "3549031"],
+              ["==", "CSDUID", "3549028"],
+              ["==", "CSDUID", "3549043"],
+              ["==", "CSDUID", "3549024"],
+              ["==", "CSDUID", "3549046"],
+              ["==", "CSDUID", "3549051"],
+              ["==", "CSDUID", "3549019"],
+              ["==", "CSDUID", "3549018"],
+              ["==", "CSDUID", "3549003"],
+              ["==", "CSDUID", "3549012"],
+              ["==", "CSDUID", "3549014"],
+              ["==", "CSDUID", "3544065"],
+              ["==", "CSDUID", "3544053"],
+              ["==", "CSDUID", "3544042"],
+              ["==", "CSDUID", "3544027"],
+              ["==", "CSDUID", "3544018"],
+              ["==", "CSDUID", "3544002"],
+              ["==", "CSDUID", "3543015"],
+              ["==", "CSDUID", "3546018"],
+              ["==", "CSDUID", "3546015"],
+              ["==", "CSDUID", "3548001"],
+              ["==", "CSDUID", "3546005"],
+              ["==", "CSDUID", "3543019"],
+              ["==", "CSDUID", "3518039"],
+              ["==", "CSDUID", "3519070"],
+              ["==", "CSDUID", "3543042"],
+              ["==", "CSDUID", "3543017"],
+              ["==", "CSDUID", "3543009"],
+              ["==", "CSDUID", "3543021"],
+              ["==", "CSDUID", "3543014"],
+              ["==", "CSDUID", "3519054"],
+              ["==", "CSDUID", "3519049"],
+              ["==", "CSDUID", "3518029"],
+              ["==", "CSDUID", "3518020"],
+              ["==", "CSDUID", "3519044"],
+              ["==", "CSDUID", "3519048"],
+              ["==", "CSDUID", "3519046"],
+              ["==", "CSDUID", "3519038"],
+              ["==", "CSDUID", "3519036"],
+              ["==", "CSDUID", "3519028"],
+              ["==", "CSDUID", "3521024"],
+              ["==", "CSDUID", "3521010"],
+              ["==", "CSDUID", "3521005"],
+              ["==", "CSDUID", "3520005"],
+              ["==", "CSDUID", "3518001"],
+              ["==", "CSDUID", "3518005"],
+              ["==", "CSDUID", "3518009"],
+              ["==", "CSDUID", "3518013"],
+              ["==", "CSDUID", "3518017"]
+            ]
+          },
+          labels
+        );
       });
       var layerList = document.getElementById("menu");
       var layerList2 = document.getElementById("menu2");
+      var layerList3 = document.getElementById("menu3");
       var inputs = layerList.getElementsByTagName("input");
       var inputs2 = layerList2.getElementsByTagName("input");
+      var inputs3 = layerList3.getElementsByTagName("input");
       function cdname(e) {
         popup.setHTML(
           "<p>" +
@@ -541,22 +884,46 @@
       }
       function munname(e) {
         popup.setHTML(
-          "<p>" +
-            "Municipality:  " +
-            e.features[0].properties.LEGAL_NAME +
-            "</p>"
+          "<p>" + "Municipality:  " + e.features[0].properties.CSDNAME + "</p>"
         );
         if (e.features.length > 0) {
-          censusname.textContent = e.features[0].properties.LEGAL_NAME;
+          censusname.textContent = e.features[0].properties.CSDNAME;
+        }
+      }
+      function AFFname(e) {
+        popup.setHTML(
+          "<p>" + "Municipality:  " + e.features[0].properties.CSDNAME + "</p>"
+        );
+        if (e.features.length > 0) {
+          censusname.textContent = e.features[0].properties.CSDNAME;
         }
       }
       function MUNmouse(e) {
-        map.on("mouseenter", "InterimLayer", function (e) {
+        map.on("mouseenter", "InterimLayer2", function (e) {
           map.getCanvas().style.cursor = "pointer";
           map.on("mousedown", function (e) {
             map.getCanvas().style.cursor = "pointer";
           });
-          map.on("mouseleave", "InterimLayer", function (e) {
+          map.on("mouseleave", "InterimLayer2", function (e) {
+            popup.remove();
+            map.getCanvas().style.cursor = "grab";
+            censusname.textContent = null;
+            map.on("mousedown", function (e) {
+              map.getCanvas().style.cursor = "grabbing";
+            });
+            map.on("mouseup", function (e) {
+              map.getCanvas().style.cursor = "pointer";
+            });
+          });
+        });
+      }
+      function AFFmouse(e) {
+        map.on("mouseenter", "InterimLayer3", function (e) {
+          map.getCanvas().style.cursor = "pointer";
+          map.on("mousedown", function (e) {
+            map.getCanvas().style.cursor = "pointer";
+          });
+          map.on("mouseleave", "InterimLayer3", function (e) {
             popup.remove();
             map.getCanvas().style.cursor = "grab";
             censusname.textContent = null;
@@ -589,32 +956,44 @@
       map.on("mousemove", "CDNAME", CDmouse);
 
       var el = document.getElementById("Regions");
+      var coveragelayer = "Current";
       function switchLayer(layer) {
         var layerId = layer.target.id;
         if (layerId == "Interim") {
+          coveragelayer = "Interim";
+          map.setPaintProperty("InterimLayer2", "fill-color", "rgb(255,0,0)");
           map.setPaintProperty("east", "fill-opacity", 0);
           map.setPaintProperty("west", "fill-opacity", 0);
           map.setPaintProperty("north", "fill-opacity", 0);
           map.setPaintProperty("central", "fill-opacity", 0);
           map.setPaintProperty("HSD", "fill-opacity", 0);
-          map.setPaintProperty("InterimLayer", "fill-opacity", 0.7);
-          map.setPaintProperty("CDNAME", "fill-color", "#C0C0C0");
-          map.setPaintProperty("CDNAME", "fill-opacity", 0.7);
+          map.setPaintProperty("CDNAME", "fill-opacity", 0);
+          map.setPaintProperty("InterimLayer2", "fill-opacity", 1);
+          map.setPaintProperty("InterimLayer3", "fill-opacity", 1);
+          map.setPaintProperty("InterimLayer2Border", "fill-opacity", 1);
           map.off("mousemove", "CDNAME", cdname);
           map.off("mousemove", "CDNAME", CDmouse);
-          map.on("mousemove", "InterimLayer", munname);
-          map.on("mousemove", "InterimLayer", MUNmouse);
+          map.on("mousemove", "InterimLayer2", munname);
+          map.on("mousemove", "InterimLayer3", AFFname);
+          map.on("mousemove", "InterimLayer2", MUNmouse);
+          map.on("mousemove", "InterimLayer3", AFFmouse);
           map.removeLayer("Inspectors");
           el.style.display = "none";
+          kk.style.display = "none";
           xx.style.display = "block";
         } else if (layerId == "Current") {
+          coveragelayer = "Current";
           map.setPaintProperty("east", "fill-opacity", 0.7);
           map.setPaintProperty("west", "fill-opacity", 0.7);
           map.setPaintProperty("north", "fill-opacity", 0.7);
           map.setPaintProperty("central", "fill-opacity", 0.7);
           map.setPaintProperty("HSD", "fill-opacity", 0.7);
-          map.setPaintProperty("InterimLayer", "fill-opacity", 0);
-          map.setPaintProperty("CDNAME", "fill-color", "rgba(0, 0, 0, 0)");
+          map.setPaintProperty("CDNAME", "fill-opacity", 1);
+          map.setPaintProperty("InterimLayer2", "fill-opacity", 0);
+          map.setPaintProperty("InterimLayer2", "fill-opacity", 0);
+          map.setPaintProperty("InterimLayer2", "fill-opacity", 0);
+          map.setPaintProperty("InterimLayer3", "fill-opacity", 0);
+          map.setPaintProperty("InterimLayer2Border", "fill-opacity", 0);
           map.addLayer({
             id: "Inspectors",
             type: "circle",
@@ -626,8 +1005,40 @@
             }
           });
           xx.style.display = "none";
+          kk.style.display = "none";
           el.style.display = "block";
           map.on("mousemove", "CDNAME", cdname);
+        } else if (layerId == "Overlay") {
+          coveragelayer = "Overlay";
+          map.on("mousemove", "CDNAME", cdname);
+          map.on("mousemove", "CDNAME", CDmouse);
+          map.on("mousemove", "InterimLayer2", munname);
+          map.on("mousemove", "InterimLayer3", AFFname);
+          map.on("mousemove", "InterimLayer2", MUNmouse);
+          map.on("mousemove", "InterimLayer3", AFFmouse);
+          map.setPaintProperty("east", "fill-opacity", 0.7);
+          map.setPaintProperty("west", "fill-opacity", 0.7);
+          map.setPaintProperty("north", "fill-opacity", 0.7);
+          map.setPaintProperty("central", "fill-opacity", 0.7);
+          map.setPaintProperty("HSD", "fill-opacity", 0.7);
+          map.setPaintProperty("CDNAME", "fill-opacity", 1);
+          map.setPaintProperty("InterimLayer2", "fill-color", "rgb(255,0,0)");
+          map.setPaintProperty("InterimLayer2", "fill-opacity", 1);
+          map.setPaintProperty("InterimLayer3", "fill-opacity", 1);
+          map.setPaintProperty("InterimLayer2Border", "fill-opacity", 0);
+          map.addLayer({
+            id: "Inspectors",
+            type: "circle",
+            source: "Locations",
+            paint: {
+              "circle-color": "#000000",
+              "circle-radius": 4,
+              "circle-stroke-width": 1
+            }
+          });
+          xx.style.display = "none";
+          el.style.display = "none";
+          kk.style.display = "block";
         }
       }
 
@@ -649,6 +1060,29 @@
       }
       for (var k = 0; k < inputs2.length; k++) {
         inputs2[k].onclick = switchType;
+      }
+
+      function switchIns(layer) {
+        var layerId = layer.target.id;
+        if (layerId == "InsOn") {
+          if (coveragelayer == "Current" || coveragelayer == "Overlay") {
+            map.addLayer({
+              id: "Inspectors",
+              type: "circle",
+              source: "Locations",
+              paint: {
+                "circle-color": "#000000",
+                "circle-radius": 4,
+                "circle-stroke-width": 1
+              }
+            });
+          }
+        } else if (layerId == "InsOff") {
+          map.removeLayer("Inspectors");
+        }
+      }
+      for (var jj = 0; jj < inputs3.length; jj++) {
+        inputs3[jj].onclick = switchIns;
       }
     </script>
   </body>
